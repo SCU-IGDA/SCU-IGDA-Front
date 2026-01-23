@@ -2,7 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 你可以在这里添加自定义的全局样式 */
 body {
-    @apply bg-gray-50 text-gray-800;
+    @apply bg-gray-50 text-gray-900 transition-colors duration-300;
+}
+
+/* 定义暗黑模式下的 body 样式 */
+.dark body {
+    @apply bg-gray-900 text-gray-100;
 }

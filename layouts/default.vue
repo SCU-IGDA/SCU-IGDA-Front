@@ -1,23 +1,29 @@
-<!-- layouts/default.vue -->
 <template>
-  <div class="min-h-screen flex flex-col">
-    <header class="bg-white shadow p-4">
-      <nav class="container mx-auto flex justify-between">
-        <h1 class="text-xl font-bold text-primary-600">SCU-IGDA</h1>
-        <ul class="flex gap-4">
-          <li><NuxtLink to="/" class="hover:text-primary-500">Home</NuxtLink></li>
-          <li><NuxtLink to="/about" class="hover:text-primary-500">About</NuxtLink></li>
-        </ul>
-      </nav>
-    </header>
+  <div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+    <!-- 1. 注册鼠标跟随组件 -->
+    <AppCursor />
 
-    <main class="flex-grow container mx-auto p-4">
-      <!-- 页面内容将渲染在这里 -->
+    <!-- 2. 注册点击特效组件 -->
+    <AppClickSpark />
+
+    <!-- 顶部导航 -->
+    <AppHeader />
+
+    <!-- 页面内容 -->
+    <main class="flex-grow">
       <slot />
     </main>
 
-    <footer class="bg-gray-800 text-white p-4 text-center">
-      <p>&copy; 2025 SCU IGDA</p>
-    </footer>
+    <!-- 底部页脚 -->
+    <AppFooter />
   </div>
 </template>
+
+<style>
+body {
+  cursor: none;
+}
+a, button {
+  cursor: none;
+}
+</style>

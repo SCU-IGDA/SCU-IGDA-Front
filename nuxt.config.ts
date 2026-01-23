@@ -3,7 +3,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode',
   ],
   css: ['~/assets/css/main.css'],
   postcss: {
@@ -12,4 +13,9 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  colorMode: {
+    classSuffix: '',
+    preference: 'system',
+    fallback: 'light'
+  }
 })

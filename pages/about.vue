@@ -1,3 +1,6 @@
+<!-- pages/about.vue -->
+<!-- 关于我们页面 -->
+
 <template>
   <div>
     <h2 class="text-2xl">关于我们</h2>
