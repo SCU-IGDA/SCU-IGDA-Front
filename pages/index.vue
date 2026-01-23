@@ -1,4 +1,4 @@
-<!-- pages/index.vue -->
+t<!-- pages/index.vue -->
 <!-- 首页 -->
 
 <script setup lang="ts">
@@ -50,7 +50,7 @@ const scrollToContent = () => {
 </script>
 
 <template>
-  <div class="flex flex-col transition-colors duration-300">
+  <div class="flex flex-col transition-colors duration-300 select-none">
 
     <!-- Section 1: Hero Banner -->
     <section class="relative h-[90vh] flex flex-col items-center justify-center bg-white dark:bg-gray-900 overflow-hidden transition-colors duration-300">
@@ -80,7 +80,7 @@ const scrollToContent = () => {
             内容库
           </BaseButton>
 
-          <BaseButton to="/teams" variant="outline" size="lg" class="min-w-[140px] dark:border-gray-700 dark:text-gray-300" disabled>
+          <BaseButton to="/teams" variant="outline" size="lg" class="min-w-[140px] dark:border-gray-700 dark:text-gray-300">
             组队系统
             <span class="ml-2 text-[10px] bg-gray-100 dark:bg-gray-800 px-1 rounded text-gray-500">Dev</span>
           </BaseButton>
@@ -157,10 +157,10 @@ const scrollToContent = () => {
           <div class="relative z-10 max-w-2xl mx-auto space-y-6">
             <h2 class="text-3xl md:text-4xl font-bold">加入我们，一起创作</h2>
             <p class="text-gray-300 text-lg">
-              无论你是程序、美术、策划还是音频，SCU IGDA 期待你的加入。
+              无论你是程序、美术、策划还是音效师，SCU IGDA 都期待你的加入。
             </p>
             <div class="pt-4">
-              <BaseButton to="/join" variant="primary" size="lg" class="bg-white text-black hover:bg-gray-100 border-none">
+              <BaseButton to="/register" variant="primary" size="lg">
                 申请加入社团
               </BaseButton>
             </div>

@@ -6,7 +6,7 @@ defineProps<{ label?: string }>()
 </script>
 
 <template>
-  <div class="relative my-6">
+  <div class="relative my-6 select-none">
     <div class="absolute inset-0 flex items-center">
       <div class="w-full border-t border-gray-200"></div>
     </div>

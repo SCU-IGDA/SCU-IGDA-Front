@@ -17,7 +17,7 @@ const form = ref({
   <div class="bg-gray-50 dark:bg-gray-900 flex flex-col justify-center items-center py-20 px-4 sm:px-6 lg:px-8 min-h-[80vh] transition-colors duration-300">
 
     <!-- 头部：标题与描述 -->
-    <div class="w-full max-w-md text-center mb-8">
+    <div class="w-full max-w-md text-center mb-8 select-none">
       <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
         欢迎回来
       </h2>
@@ -50,7 +50,7 @@ const form = ref({
         </div>
 
         <!-- 选项栏 -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between select-none">
           <div class="flex items-center">
             <input
               id="remember-me"
@@ -81,8 +81,7 @@ const form = ref({
       <AuthDivider label="使用第三方账号登录" />
 
       <!-- 第三方按钮 -->
-      <div class="grid grid-cols-2 gap-4">
-        <!-- AuthSocialButton 内部应添加 dark:bg-gray-700 dark:border-gray-600 -->
+      <div class="grid grid-cols-2 gap-4 select-none">
         <AuthSocialButton class="dark:bg-gray-700 dark:border-gray-600">
           <svg class="h-5 w-5 text-[#0099FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.2c3.44 0 6.45 1.58 8.35 4.02-.35.32-.73.61-1.13.86-.32-2.18-2.2-3.88-4.47-3.88-1.57 0-2.95.82-3.77 2.06-.82-1.24-2.2-2.06-3.77-2.06-2.27 0-4.15 1.7-4.47 3.88-.4-.25-.78-.54-1.13-.86C3.55 3.78 6.56 2.2 12 2.2z"/></svg>
           <span class="ml-2 dark:text-gray-300">QQ</span>
@@ -95,7 +94,7 @@ const form = ref({
       </div>
 
       <!-- 底部跳转 -->
-      <p class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+      <p class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400 select-none">
         还没有账号?
         <NuxtLink to="/register" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
           立即注册

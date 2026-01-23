@@ -21,7 +21,7 @@ defineEmits(['update:modelValue'])
         :class="[
           modelValue === ''
             ? 'bg-black text-white border-black shadow-md'
-            : 'bg-white dark:bg-gray-800 text-gray-600 border-gray-200 hover:bg-gray-50'
+            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-white border-gray-200 dark:border-gray-600 hover:bg-gray-50'
         ]"
       >
         全部
@@ -36,7 +36,7 @@ defineEmits(['update:modelValue'])
         :class="[
           modelValue === category
             ? 'bg-black text-white border-black shadow-md'
-            : 'bg-white dark:bg-gray-800 text-gray-600 border-gray-200 hover:bg-gray-50'
+            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-white border-gray-200 dark:border-gray-600 hover:bg-gray-50'
         ]"
       >
         {{ category }}

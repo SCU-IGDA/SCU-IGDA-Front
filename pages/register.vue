@@ -19,7 +19,7 @@ const form = ref({
   <div class="bg-gray-50 dark:bg-gray-900 flex flex-col justify-center items-center py-20 px-4 sm:px-6 lg:px-8 min-h-[80vh] transition-colors duration-300">
 
     <!-- 头部：标题与描述 -->
-    <div class="w-full max-w-md text-center mb-8">
+    <div class="w-full max-w-md text-center mb-8 select-none">
       <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
         加入社团
       </h2>
@@ -66,7 +66,7 @@ const form = ref({
         />
 
         <!-- 用户协议勾选 -->
-        <div class="flex items-start pt-2">
+        <div class="flex items-start pt-2 select-none">
           <div class="flex items-center h-5">
             <input
               id="agree"
@@ -86,7 +86,7 @@ const form = ref({
         </div>
 
         <!-- 注册按钮 -->
-        <div class="pt-2">
+        <div class="pt-2 select-none">
           <BaseButton
             type="submit"
             class="w-full shadow-md shadow-blue-200 dark:shadow-blue-900/20"
@@ -102,7 +102,7 @@ const form = ref({
       <AuthDivider label="或者" />
 
       <!-- 底部跳转链接 -->
-      <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+      <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400 select-none">
         已有账号?
         <NuxtLink to="/login" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
           直接登录

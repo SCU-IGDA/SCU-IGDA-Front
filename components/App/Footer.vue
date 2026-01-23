@@ -2,14 +2,14 @@
 <!-- 全局页脚 -->
 
 <template>
-  <footer class="bg-gray-900 text-gray-300 border-t border-gray-800">
+  <footer class="bg-gray-900 text-gray-300 border-t border-gray-800 select-none">
     <AppContainer>
       <div class="py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
 
         <!-- Column 1: Organization Info -->
         <div class="space-y-4">
           <h3 class="text-white text-lg font-bold">SCU IGDA</h3>
-          <p class="text-sm text-gray-400 leading-relaxed">
+          <p class="text-sm text-gray-400 leading-relaxed select-text">
             四川大学游戏开发与研究社<br>
             致力于为校内游戏爱好者提供一个<br>
             交流、学习与创作的平台。

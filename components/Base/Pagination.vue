@@ -12,6 +12,18 @@ const emit = defineEmits(['update:page'])
 const updatePage = (newPage: number) => {
   if (newPage >= 1 && newPage <= props.totalPages) {
     emit('update:page', newPage)
+    // 翻页后自动滚动到顶部
+    scrollToTop()
+  }
+}
+
+const scrollToTop = () => {
+  // 使用平滑滚动回到顶部
+  if (typeof window !== 'undefined') {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
   }
 }
 </script>

@@ -1,29 +1,39 @@
-<template>
-  <div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
-    <!-- 1. 注册鼠标跟随组件 -->
-    <AppCursor />
+<!-- components/App/Layout.vue -->
+<!-- 全局默认布局 -->
 
-    <!-- 2. 注册点击特效组件 -->
+<script setup lang="ts">
+import { useGlobalAudio } from '~/composables/useGlobalAudio'
+
+const { initAudio } = useGlobalAudio()
+
+// 监听全局点击
+onMounted(() => {
+  // 预初始化（解决部分浏览器需要用户交互才能构建 AudioContext 的问题）
+  window.addEventListener('click', () => {
+    initAudio()
+  })
+})
+</script>
+
+<template>
+  <div class="flex flex-col min-h-screen transition-colors duration-300 bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+
+    <!-- 鼠标特效 -->
+    <AppCursor />
     <AppClickSpark />
+
+    <!-- 全局音频控制器 -->
+    <ClientOnly>
+      <AppAudioController />
+    </ClientOnly>
 
     <!-- 顶部导航 -->
     <AppHeader />
 
-    <!-- 页面内容 -->
     <main class="flex-grow">
       <slot />
     </main>
 
-    <!-- 底部页脚 -->
     <AppFooter />
   </div>
 </template>
-
-<style>
-body {
-  cursor: none;
-}
-a, button {
-  cursor: none;
-}
-</style>

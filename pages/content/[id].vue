@@ -69,7 +69,7 @@ const commentInput = ref('')
           </div>
 
           <!-- 3. 作者栏 -->
-          <div class="px-8 py-4 border-t border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="px-8 py-4 border-t border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4 select-none">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0"></div>
               <div class="flex flex-col">
@@ -108,7 +108,7 @@ const commentInput = ref('')
 
         <!-- 模块二：评论区 -->
         <section class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 border border-transparent dark:border-gray-700">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">评论区</h3>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 select-none">评论区</h3>
 
           <!-- 1. 评论输入框区域 -->
           <div class="flex gap-4 mb-10">
@@ -139,10 +139,10 @@ const commentInput = ref('')
               <div class="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded flex-shrink-0"></div>
 
               <div class="flex-grow">
-                <div class="inline-block bg-gray-200 dark:bg-gray-700 px-2 py-0.5 text-xs text-gray-600 dark:text-gray-300 mb-1 rounded-sm">
+                <div class="inline-block bg-gray-200 dark:bg-gray-700 px-2 py-0.5 text-xs text-gray-600 dark:text-gray-300 mb-1 rounded-sm select-none">
                   {{ comment.user }}
                 </div>
-                <div class="inline-block ml-2 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 text-xs text-gray-500 dark:text-gray-400 mb-1 rounded-sm">
+                <div class="inline-block ml-2 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 text-xs text-gray-500 dark:text-gray-400 mb-1 rounded-sm select-none">
                   {{ comment.date }}
                 </div>
 

@@ -11,7 +11,7 @@ const navLinks = [
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100">
+  <header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 select-none">
     <AppContainer>
       <div class="flex items-center justify-between h-16">
         <!-- Left: Logo -->
@@ -44,7 +44,7 @@ const navLinks = [
         <div class="flex items-center gap-4">
           <AppThemeToggle />
           <!-- TODO: 搜索图标占位 -->
-          <button class="text-gray-500 hover:text-black">
+          <button class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors focus:outline-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </button>
 

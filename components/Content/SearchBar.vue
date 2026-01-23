@@ -13,11 +13,16 @@ const emit = defineEmits(['update:modelValue', 'search'])
 const handleSearch = () => {
   emit('search')
 }
+
+// 清除输入内容
+const handleClear = () => {
+  emit('update:modelValue', '')
+}
 </script>
 
 <template>
   <div class="flex items-center gap-2 w-full max-w-2xl mx-auto">
-    <div class="flex-grow">
+    <div class="flex-grow relative">
       <!-- 复用 BaseInput，监听回车键 -->
       <BaseInput
         :modelValue="modelValue"
@@ -26,6 +31,19 @@ const handleSearch = () => {
         @keyup.enter="handleSearch"
         class="w-full"
       />
+
+      <!-- 清除按钮 -->
+      <button
+        v-if="modelValue"
+        @click="handleClear"
+        type="button"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors focus:outline-none"
+        aria-label="清除搜索内容"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
     <div class="flex-shrink-0">
       <BaseButton
