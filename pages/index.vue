@@ -1,6 +1,3 @@
-t<!-- pages/index.vue -->
-<!-- 首页 -->
-
 <script setup lang="ts">
 // 页面元数据（SEO）
 useHead({
@@ -9,6 +6,9 @@ useHead({
     { name: 'description', content: '四川大学游戏开发与研究社官方网站，提供游戏开发资源、教程与社团活动信息。' }
   ]
 })
+
+// 使用全局公告
+const { announcement } = useAnnouncement()
 
 // 模拟“内容库”的精选数据
 // TODO: 替换为 const { data } = await useFetch('/api/posts/featured')
@@ -50,55 +50,70 @@ const scrollToContent = () => {
 </script>
 
 <template>
-  <div class="flex flex-col transition-colors duration-300 select-none">
+  <div class="flex flex-col min-h-screen transition-colors duration-300 select-none">
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border-b border-blue-100 dark:border-gray-800 py-2 sm:py-3 px-3 sm:px-4">
+      <!-- 公告栏 -->
+      <AppContainer class="flex items-center justify-between gap-2 sm:gap-3">
+        <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex-shrink-0">
+            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="font-bold text-gray-900 dark:text-white text-xs sm:text-sm truncate">{{ announcement.title }}</h3>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{{ announcement.content }}</p>
+          </div>
+        </div>
+        <button class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors whitespace-nowrap flex-shrink-0">
+          了解更多 →
+        </button>
+      </AppContainer>
+    </div>
 
-    <!-- Section 1: Hero Banner -->
-    <section class="relative h-[90vh] flex flex-col items-center justify-center bg-white dark:bg-gray-900 overflow-hidden transition-colors duration-300">
+    <!-- 内容区域 -->
+    <section class="relative min-h-[calc(100dvh-7.5rem)] md:min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center bg-white dark:bg-gray-900 overflow-hidden transition-colors duration-300 py-8 md:py-0">
       <div class="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none"></div>
 
-      <div class="z-10 text-center space-y-8 px-4 animate-fade-in-up">
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+      <div class="z-10 text-center space-y-6 md:space-y-8 px-4 animate-fade-in-up w-full max-w-4xl mx-auto">
+        <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white">
           SCU IGDA
         </h1>
 
         <div class="space-y-2">
-          <p class="text-2xl md:text-3xl text-gray-700 dark:text-gray-300 font-light">
+          <p class="text-xl sm:text-2xl md:text-3xl text-gray-700 dark:text-gray-300 font-light">
             四川大学游戏开发与研究社
           </p>
-          <p class="text-sm md:text-base text-gray-400 dark:text-gray-500 tracking-widest uppercase mt-4">
+          <p class="text-xs sm:text-sm md:text-base text-gray-400 dark:text-gray-500 tracking-widest uppercase mt-2 md:mt-4">
             —— 成为游戏背后的缔造者 ——
           </p>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
-          <BaseButton to="/activities" variant="outline" size="lg" class="min-w-[140px] dark:border-gray-700 dark:text-gray-300">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 md:mt-8 justify-center">
+          <BaseButton to="/activities" variant="outline" size="lg" class="min-w-[120px] sm:min-w-[140px] dark:border-gray-700 dark:text-gray-300">
             近期活动
           </BaseButton>
 
-          <BaseButton to="/content" variant="primary" size="lg" class="min-w-[140px] shadow-lg shadow-blue-200 dark:shadow-blue-900/20">
+          <BaseButton to="/content" variant="primary" size="lg" class="min-w-[120px] sm:min-w-[140px] shadow-lg shadow-blue-200 dark:shadow-blue-900/20">
             内容库
           </BaseButton>
 
-          <BaseButton to="/teams" variant="outline" size="lg" class="min-w-[140px] dark:border-gray-700 dark:text-gray-300">
+          <BaseButton to="/teams" variant="outline" size="lg" class="min-w-[120px] sm:min-w-[140px] dark:border-gray-700 dark:text-gray-300">
             组队系统
             <span class="ml-2 text-[10px] bg-gray-100 dark:bg-gray-800 px-1 rounded text-gray-500">Dev</span>
           </BaseButton>
         </div>
       </div>
 
-      <!-- Scroll Indicator -->
+      <!-- 下一页按钮 -->
       <button
         @click="scrollToContent"
-        class="absolute bottom-10 animate-bounce text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition cursor-pointer"
+        class="absolute bottom-4 md:bottom-6 animate-bounce text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition cursor-pointer z-20"
         aria-label="Scroll down"
       >
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
       </button>
     </section>
 
-
-    <!-- Section 2: Latest Content -->
+    <!-- 内容库精选 -->
     <section id="content-section" class="py-20 bg-gray-50 dark:bg-gray-800/50 transition-colors duration-300">
       <AppContainer>
         <div class="flex justify-between items-end mb-10">
@@ -112,7 +127,6 @@ const scrollToContent = () => {
           </BaseButton>
         </div>
 
-        <!-- Grid Layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <NuxtLink
             v-for="post in featuredPosts"
@@ -150,7 +164,7 @@ const scrollToContent = () => {
       </AppContainer>
     </section>
 
-    <!-- Section 3: Call to Action -->
+    <!-- 加入社团 -->
     <section class="py-24 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300">
       <AppContainer>
         <div class="bg-gray-900 dark:bg-black rounded-2xl p-10 md:p-16 text-center text-white relative overflow-hidden border border-gray-800">
@@ -171,7 +185,6 @@ const scrollToContent = () => {
         </div>
       </AppContainer>
     </section>
-
   </div>
 </template>
 

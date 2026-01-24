@@ -3,6 +3,7 @@
 
 <script setup lang="ts">
 // 定义帖子数据结构接口
+// TODO: username
 export interface Post {
   id: string | number     // 帖子唯一标识
   title: string           // 帖子标题

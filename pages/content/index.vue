@@ -4,6 +4,9 @@ import type { Post } from '~/components/Content/PostListCard.vue'
 // 页面元数据
 useHead({ title: '内容库 - SCU IGDA' })
 
+// 使用全局公告
+const { announcement } = useAnnouncement()
+
 // --- 状态管理 ---
 const searchQuery = ref('')
 const appliedSearchQuery = ref('') // 实际应用的搜索词
@@ -260,9 +263,9 @@ const pending = ref(false)
           </div>
 
           <div class="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-800 shadow-sm transition-colors">
-            <h3 class="font-bold text-gray-900 dark:text-white mb-3 font-sans">📢 社团公告</h3>
+            <h3 class="font-bold text-gray-900 dark:text-white mb-3 font-sans">{{ announcement.title }}</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed select-text font-sans">
-              2026年春季招新正在进行中！请有意向加入IGDA的同学点击上方“发布帖子”提交作品集链接。
+              {{ announcement.content }}
             </p>
           </div>
         </aside>
