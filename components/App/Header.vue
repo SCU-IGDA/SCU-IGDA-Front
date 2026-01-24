@@ -8,6 +8,7 @@ const navLinks = [
   { name: '近期活动', path: '/activities' },
   { name: '内容库', path: '/content' },
   { name: '组队系统', path: '/teams' },
+  { name: '关于我们', path: '/about' }
 ]
 
 // 移动端菜单状态
