@@ -217,6 +217,7 @@ const pending = ref(false)
         <div class="lg:col-span-3">
 
           <div v-if="pending" class="space-y-4">
+            <!-- TODO: 将 4 改为 15 -->
             <div v-for="n in 4" :key="n" class="h-40 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse"></div>
           </div>
 

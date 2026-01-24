@@ -19,7 +19,7 @@ const sizeMap: Record<number, string> = {
   5: 'text-xl font-extrabold text-blue-600 dark:text-blue-400'
 }
 
-// 随机旋转角度 (可选，增加灵动感)
+// 随机旋转角度
 const getRandomRotation = () => {
   const rotations = ['rotate-0', 'rotate-0', 'rotate-0', 'rotate-1', '-rotate-1', 'rotate-2', '-rotate-2']
   return rotations[Math.floor(Math.random() * rotations.length)]

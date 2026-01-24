@@ -5,10 +5,10 @@ import type { Post } from './PostListCard.vue'
 import PostListCard from './PostListCard.vue'
 
 interface Props {
-  posts: Post[]
-  loading: boolean
-  page: number
-  totalPages: number
+  posts: Post[]         // 帖子数据
+  loading: boolean      // 加载状态
+  page: number          // 当前页码
+  totalPages: number    // 总页数
 }
 
 defineProps<Props>()

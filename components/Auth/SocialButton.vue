@@ -1,5 +1,5 @@
 <!-- components/Auth/SocialButton.vue -->
-<!-- 社交登录按钮 -->
+<!-- 社交登录按钮（暂时未使用） -->
 
 <script setup lang="ts">
 // 这是一个纯 UI 组件，用于包裹 QQ/微信 图标

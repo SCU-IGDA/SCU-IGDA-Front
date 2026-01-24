@@ -23,6 +23,7 @@
             <li><NuxtLink to="/" class="hover:text-white transition">首页</NuxtLink></li>
             <li><NuxtLink to="/content" class="hover:text-white transition">内容库</NuxtLink></li>
             <li><NuxtLink to="/activities" class="hover:text-white transition">社团活动</NuxtLink></li>
+            <li><NuxtLink to="/teams" class="hover:text-white transition">组队系统</NuxtLink></li>
             <li><NuxtLink to="/about" class="hover:text-white transition">关于我们</NuxtLink></li>
           </ul>
         </div>

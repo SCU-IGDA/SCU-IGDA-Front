@@ -7,9 +7,9 @@ useHead({ title: '登录 - SCU IGDA' })
 
 // UI 状态
 const form = ref({
-  email: '',
-  password: '',
-  remember: false
+  email: '',        // 用户邮箱
+  password: '',     // 用户密码
+  remember: false   // 记住密码
 })
 </script>
 
@@ -78,22 +78,7 @@ const form = ref({
         </div>
       </form>
 
-      <AuthDivider label="使用第三方账号登录" />
-
-      <!-- 第三方按钮 -->
-      <div class="grid grid-cols-2 gap-4 select-none">
-        <AuthSocialButton class="dark:bg-gray-700 dark:border-gray-600">
-          <svg class="h-5 w-5 text-[#0099FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.2c3.44 0 6.45 1.58 8.35 4.02-.35.32-.73.61-1.13.86-.32-2.18-2.2-3.88-4.47-3.88-1.57 0-2.95.82-3.77 2.06-.82-1.24-2.2-2.06-3.77-2.06-2.27 0-4.15 1.7-4.47 3.88-.4-.25-.78-.54-1.13-.86C3.55 3.78 6.56 2.2 12 2.2z"/></svg>
-          <span class="ml-2 dark:text-gray-300">QQ</span>
-        </AuthSocialButton>
-
-        <AuthSocialButton class="dark:bg-gray-700 dark:border-gray-600">
-          <svg class="h-5 w-5 text-[#07C160]" fill="currentColor" viewBox="0 0 24 24"><path d="M17.4 12.6c0-.9.2-1.8.6-2.6-1.5-.7-3.2-1.1-5-1.1-6.1 0-11 3.8-11 8.5 0 2.6 1.5 5 4.1 6.5-.2.8-.7 1.9-1.3 2.5 1.7 0 3.3-.8 4.6-1.7.9.2 1.9.3 2.9.3.4 0 .9 0 1.3-.1-.3-1.1-.4-2.2-.4-3.4-.1-4.7 3.9-8.5 8.7-8.5 1.9 0 3.6.6 5.1 1.6.4-1.3.6-2.7.6-4.1-.1-4.7-5-8.5-11.2-8.5z"/></svg>
-          <span class="ml-2 dark:text-gray-300">微信</span>
-        </AuthSocialButton>
-      </div>
-
-      <!-- 底部跳转 -->
+            <!-- 底部跳转 -->
       <p class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400 select-none">
         还没有账号?
         <NuxtLink to="/register" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">

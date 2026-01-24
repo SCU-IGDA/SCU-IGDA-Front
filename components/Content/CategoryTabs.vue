@@ -3,8 +3,8 @@
 
 <script setup lang="ts">
 interface Props {
-  categories: string[] // 例如 ['程序', '美术', '策划']
-  modelValue: string   // 当前选中的分类，空字符串代表'全部'
+  categories: string[]  // 例如 ['程序', '美术', '策划']
+  modelValue: string    // 当前选中的分类，空字符串代表'全部'
 }
 
 defineProps<Props>()

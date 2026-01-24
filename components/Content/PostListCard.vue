@@ -4,15 +4,15 @@
 <script setup lang="ts">
 // 定义帖子数据结构接口
 export interface Post {
-  id: string | number
-  title: string
-  summary: string
-  cover?: string
-  author: string
-  date: string
-  category: string
-  views?: number
-  likes?: number
+  id: string | number     // 帖子唯一标识
+  title: string           // 帖子标题
+  summary: string         // 帖子摘要
+  cover?: string          // 帖子封面图片
+  author: string          // 帖子作者
+  date: string            // 帖子发布时间
+  category: string        // 帖子分类
+  views?: number          // 帖子浏览量
+  likes?: number          // 帖子点赞数
 }
 
 defineProps<{
