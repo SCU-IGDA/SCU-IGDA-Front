@@ -17,5 +17,10 @@ export default defineNuxtConfig({
     classSuffix: '',
     preference: 'system',
     fallback: 'light'
+  },
+  runtimeConfig:{
+	public:{
+		apiBase:'https://my-worker.13062323959.workers.dev'
+	}
   }
 })
