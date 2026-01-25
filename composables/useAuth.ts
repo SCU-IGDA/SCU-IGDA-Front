@@ -1,51 +1,73 @@
 // composables/useAuth.ts
-export const useAuth = () => {
-  // 1. 使用 useState 创建全局响应式状态
-  // 这里的 'user' 是全局唯一的 key，不同组件调用 useAuth() 获取的是同一个 Ref
-  const user = useState<any | null>('user', () => null)
-  
-  // 2. 计算属性判断是否登录
-  const isLoggedIn = computed(() => !!user.value)
 
-  // 3. 设置用户状态 (登录/注册成功时调用)
-  const setUserState = (token: string, userData: any) => {
-    // 存 Cookie
-    const tokenCookie = useCookie('auth_token', { maxAge: 60 * 60 * 24 * 7 })
+// 定义接口...
+interface User {
+  userId: number
+  username: string
+  avatar: string
+  dynamicNum: number
+  permissionLevel: number
+  email: string
+  isLogin: boolean
+}
+
+interface VerifyTokenResponse {
+  valid: boolean
+  userResponse?: User
+  message?: string
+}
+
+// composables/useAuth.ts
+export const useAuth = () => {
+  // 1. 顶层同步调用
+  const config = useRuntimeConfig()
+  const token = useCookie('auth_token') 
+  const tokenCookie = useCookie('auth_token', { maxAge: 60 * 60 * 24 * 7 })
+  const user = useState<User | null>('user', () => null)
+  
+  // 🆕 新增：获取 Nuxt App 上下文，用于稍后手动恢复上下文（如果需要）
+  const nuxtApp = useNuxtApp()
+  const isLoggedIn = computed(() => !!user.value)
+  const setUserState = (token: string, userData: User) => {
     tokenCookie.value = token
-    
-    // 更新全局状态 (这会触发 Navbar 更新)
     user.value = userData
   }
-
-  // 4. 登出
   const logout = () => {
-    const tokenCookie = useCookie('auth_token')
     tokenCookie.value = null
     user.value = null
-    navigateTo('/login') // 登出后强制跳转
+    // ⚠️ 重点修改：navigateTo 在服务端异步错误流中可能丢失上下文
+    // 我们加上 nuxtApp.runWithContext 确保它是安全的
+    nuxtApp.runWithContext(() => {
+        navigateTo('/login')
+    })
   }
-
-  // 5. 初始化 (在 app.vue 或插件中调用，用于刷新页面后恢复状态)
   const fetchUser = async () => {
-    const token = useCookie('auth_token')
-    if (!token.value) return
-
+    if (!tokenCookie.value) return
+    if (user.value) return
+	if (import.meta.server) return
     try {
-      // 假设有一个 /user/profile 接口用 token 换用户信息
-      // 如果没有这个接口，你可以暂时只恢复 token，或者解码 JWT
-      // 这里仅做演示
-      // const data = await $fetch('/user/profile', ...)
-      // user.value = data
+      // ⚠️ 重点检查：config.public.apiBase
+      // 在服务端，如果是相对路径 (如 '/api')，会导致请求失败！
+      // 服务端必须是绝对路径 (如 'http://localhost:8080/api')
+      const res = await $fetch<VerifyTokenResponse>('/user/verifyToken', {
+        method: 'POST',
+        baseURL: config.public.apiBase as string, 
+        body: { token: tokenCookie.value }
+      })
+      if (res.valid && res.userResponse) {
+        user.value = res.userResponse
+      } else {
+        throw new Error(res.message || 'Token 无效')
+      }
     } catch (e) {
-      logout()
+      console.error('恢复登录态失败:', e)
+      
+      // 🌟 重点修改：区分环境
+      // 如果是在服务端出错（比如网络连不上后端），直接清空 Token 即可，
+      // 不要强行 navigateTo，因为此时响应流可能还没准备好处理重定向
+      tokenCookie.value = null
+      user.value = null
     }
   }
-
-  return {
-    user,
-    isLoggedIn,
-    setUserState,
-    logout,
-    fetchUser
-  }
+  return { user, isLoggedIn, setUserState, logout, fetchUser, token }
 }

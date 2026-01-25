@@ -3,7 +3,7 @@
 
 <script setup lang="ts">
 // 1. 引入 Auth 钩子 (确保你有 composables/useAuth.ts)
-const { user, isLoggedIn, logout } = useAuth()
+const { user, isLoggedIn, logout, token } = useAuth()
 
 // 定义导航菜单项
 const navLinks = [
@@ -86,17 +86,8 @@ onBeforeUnmount(() => {
 
           <!-- 🌟 PC端逻辑核心修改区 -->
           <ClientOnly>
-            <!-- 情况A: 未登录 -->
-            <NuxtLink
-              v-if="!isLoggedIn"
-              to="/login"
-              class="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white dark:text-black bg-gray-800 dark:bg-gray-300 rounded-md hover:bg-gray-700 dark:hover:bg-gray-200 transition-all shadow-sm"
-            >
-              登录 / 注册
-            </NuxtLink>
-
-            <!-- 情况B: 已登录 (头像 + 下拉菜单) -->
-            <div v-else class="hidden sm:relative sm:flex group">
+			<!-- 情况A: 已登录 (头像 + 下拉菜单) -->
+            <div v-if="isLoggedIn " class="hidden sm:relative sm:flex group">
               <!-- 用户触发按钮 -->
               <button class="flex items-center gap-2 focus:outline-none py-2">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-200 max-w-[100px] truncate">
@@ -127,9 +118,20 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </div>
+			
+            <!-- 情况B: 未登录 -->
+            <NuxtLink
+              v-else-if="!token"
+              to="/login"
+              class="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white dark:text-black bg-gray-800 dark:bg-gray-300 rounded-md hover:bg-gray-700 dark:hover:bg-gray-200 transition-all shadow-sm"
+            >
+              登录 / 注册
+            </NuxtLink>
+
+            
 
             <!-- 加载时的占位符 (防止闪烁) -->
-            <template #fallback>
+            <template v-else>
               <div class="w-20 h-9 bg-gray-200 dark:bg-gray-700 rounded animate-pulse hidden sm:block"></div>
             </template>
           </ClientOnly>
