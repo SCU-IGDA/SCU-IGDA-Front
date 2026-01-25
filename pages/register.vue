@@ -3,10 +3,10 @@
 
 <script setup lang="ts">
 	import { ref, onMounted, onUnmounted } from 'vue'
-	// 确保正确引入 Nuxt 的组合式函数 (Nuxt 自动引入通常不需要手动写 import，但为了保险列出)
-	// 如果报错 useRouter 未定义，请确保是 Nuxt 环境
+	import { useAuth } from '~/composables/useAuth'
 	const router = useRouter()
 	const config = useRuntimeConfig()
+	const { setUserState, fetchUser } = useAuth()
 
 	useHead({ title: '注册账号 - SCU IGDA' })
 
@@ -87,25 +87,25 @@
 					email: form.value.email
 				}
 			})
-			
+
 			console.log('验证码发送结果:', res)
-			
+
 			// 发送成功后开始倒计时
 			countdown.value = 60
 			canResend.value = false
 			const endTime = Date.now() + 60 * 1000
 			localStorage.setItem('verificationCodeEndTime', endTime.toString())
 			startCountdownTimer()
-			
+
 			// 提示用户 (如果是本地开发，提醒去看控制台)
 			alert('验证码已发送！')
 
-		} catch (error: any) {
+		} catch (error : any) {
 			console.error('发送验证码失败:', error)
 			alert(error.data?.message || '验证码发送失败，请稍后重试')
 		}
 	}
-	
+
 	// 2. 注册逻辑 (对接不可修改的 /setUser 接口)
 	const handleRegister = async () => {
 		// 前端校验
@@ -134,7 +134,7 @@
 			}
 
 			// 调用后端 /setUser 接口
-			const data: any = await $fetch('/user/setUser', {
+			const data : any = await $fetch('/user/setUser', {
 				method: 'POST',
 				baseURL: config.public.apiBase, // 确保这里配置正确
 				body: payload
@@ -143,26 +143,40 @@
 			console.log('注册成功响应:', data)
 
 			// 注册成功后的处理
-			if (data.message === '注册成功') {
-				// 1. 如果后端返回了 token，存起来
-				if (data.token) {
-					const tokenCookie = useCookie('token', { maxAge: 60 * 60 * 24 })
-					tokenCookie.value = data.token
+			if (data.message === '注册成功' || data.token) {
+				// 情况 A: 后端注册接口做得好，直接返回了 { token: '...', userResponse: {...} }
+				if (data.token && data.userResponse) {
+					setUserState(data.token, data.userResponse)
+					alert('注册成功，已自动登录！')
+					router.push('/')
 				}
-				
-				// 2. 提示并跳转
-				alert('注册成功！')
-				router.push('/login') // 或跳转到首页
+				// 情况 B: 后端只返回了 token
+				else if (data.token) {
+					// 先存 Token (这里需要 useAuth 暴露一个仅存 Token 的方法，或者手动模拟)
+					// 建议修改 useAuth 增加一个 setToken 方法，或者直接用 cookie
+					const tokenCookie = useCookie('auth_token') // 注意：名字要和 useAuth 里保持一致！
+					tokenCookie.value = data.token
+
+					// 尝试拉取用户信息
+					await fetchUser()
+					alert('注册成功！')
+					router.push('/')
+				}
+				// 情况 C: 没返回 token，需要去登录页
+				else {
+					alert('注册成功，请登录！')
+					router.push('/login')
+				}
 			}
 
-		} catch (error: any) {
+		} catch (error : any) {
 			console.error('注册请求出错:', error)
-			
+
 			// 处理后端返回的 specific error codes
 			if (error.response) {
 				const status = error.response.status
 				const msg = error.data?.message || '未知错误'
-				
+
 				if (status === 409) {
 					alert(`注册失败: ${msg}`) // 邮箱已存在
 				} else if (status === 400) {
@@ -249,7 +263,7 @@
 				<!-- 注册按钮 -->
 				<div class="pt-2 select-none">
 					<BaseButton type="submit" class="w-full shadow-md shadow-blue-200 dark:shadow-blue-900/20" size="lg"
-						:disabled="!form.agree" >
+						:disabled="!form.agree">
 						注册账号
 					</BaseButton>
 				</div>

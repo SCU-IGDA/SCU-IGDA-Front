@@ -1,20 +1,21 @@
 <script setup lang="ts">
-	// 1. 引入路由，用于跳转
+	// 1. 引入我们封装好的 useAuth
+	// 注意：确保 useAuth 导出了 login 或 setUserState 方法
+	const { setUserState } = useAuth()
 	const router = useRouter()
-
-	// 页面元数据
+	const config = useRuntimeConfig()
 	useHead({ title: '登录 - SCU IGDA' })
-
 	// UI 状态
-	const loading = ref(false) // 新增：控制按钮的加载状态
+	const loading = ref(false)
 	const form = ref({
 		email: '',
 		password: '',
 		remember: false
 	})
-
-	// --- 类型定义 (建议后续移动到 types/api.ts) ---
-	export interface User {
+	// --- 类型定义 --- 
+	// 建议：最佳实践是将这些接口移到 `/types/user.d.ts` 或 `/composables/useAuth.ts` 中导出
+	// 这里保留是为了不报错
+	interface User {
 		userId : number
 		username : string
 		avatar : string
@@ -23,28 +24,18 @@
 		email : string
 		isLogin : boolean
 	}
-
-	export interface LoginResponse {
+	interface LoginResponse {
 		userResponse : User
 		token : string
 	}
-	// ---------------------------------------------
-
-	const config = useRuntimeConfig()
-
-	// 定义全局用户状态（类似简单的 Store）
-	// 这样在别的页面也能通过 useUser() 获取到用户信息
-	const useUser = () => useState<User | null>('user', () => null)
-	const user = useUser()
-
+	// ----------------
 	const handleLogin = async () => {
 		// 简单的表单校验
 		if (!form.value.email || !form.value.password) return
-
-		// 1. 开启 Loading，防止重复点击
 		loading.value = true
-
 		try {
+			// 1. 发起请求
+			// 务必确认后端路径是 /user/login 还是 /login，这里以你提供的代码 /user/login 为准
 			const data = await $fetch<LoginResponse>('/user/login', {
 				method: 'POST',
 				baseURL: config.public.apiBase,
@@ -52,39 +43,30 @@
 					email: form.value.email,
 					password: form.value.password
 				},
-				// 注意：这里建议去掉 onResponseError 中的 alert
-				// 统一在 catch 里处理错误，或者在这里只处理特定业务逻辑
-				onResponseError({ response }) {
-					if (response.status === 401) {
-						console.warn('账号或密码错误')
-					}
-				}
+				// 这里的错误通常由 catch 捕获，移除 onResponseError 以简化逻辑
 			})
+			// 2. 核心修改：使用 useAuth 统一管理状态
+			// 不要在这里手动 setCookie，也不要定义 useUser
+			// 只要这一行，全局状态 + Cookie 就都设置好了
+			if (data.token && data.userResponse) {
+				// 如果你的 useAuth 不支持传入过期时间，目前 Remember Me 功能可能需要修改 useAuth 才能生效
+				// 这里我们先完成核心的登录同步
+				setUserState(data.token, data.userResponse)
 
-			// --- 登录成功后的逻辑 ---
-
-			// 2. 存储 Token 到 Cookie (设置过期时间为7天，或者根据你的 remember me 决定)
-			const tokenCookie = useCookie('token', {
-				maxAge: form.value.remember ? 60 * 60 * 24 * 7 : 60 * 60 * 24 // 记住我7天，否则1天
-			})
-			tokenCookie.value = data.token
-
-			// 3. 更新全局用户状态
-			user.value = data.userResponse
-
-			console.log('登录成功:', data.userResponse.username)
-
-			// 4. 跳转到首页
-			await router.push('/')
-
+				console.log('登录成功:', data.userResponse.username)
+				// 3. 跳转
+				await router.push('/')
+			}
 		} catch (error : any) {
-			// 5. 错误处理
 			console.error('登录流程异常:', error)
-			// 获取后端返回的具体错误信息 (fetch 的错误对象里包含了 data)
-			const msg = error.data || '登录请求失败，请检查网络或联系管理员'
-			alert(msg) // 实际项目中建议使用 Toast 组件替代 alert
+
+			// 优雅的错误信息提取
+			const errorData = error.data
+			// 优先显示后端返回的 message，其次显示 error 字段，最后显示默认文本
+			const msg = errorData?.message || errorData?.error || '登录请求失败，请检查网络或账号密码'
+
+			alert(msg)
 		} finally {
-			// 6. 无论成功失败，最后都要关闭 Loading
 			loading.value = false
 		}
 	}
@@ -138,11 +120,12 @@
 
 				<!-- 提交按钮 -->
 				<div>
-					<!-- 修改点：传入 loading 状态，禁用按钮 -->
-					<BaseButton type="submit" class="w-full shadow-md shadow-blue-200 dark:shadow-blue-900/20" size="lg"
-						:disabled="loading">
-						<!-- 简单的 Loading 文字切换，如果 BaseButton 内部有 loading prop 更好 -->
-						{{ loading ? '登录中...' : '登录' }}
+					<!-- 稍微优化：Loading 时禁止点击且鼠标样式变化 -->
+					<BaseButton type="submit"
+						class="w-full shadow-md shadow-blue-200 dark:shadow-blue-900/20 disabled:opacity-70 disabled:cursor-not-allowed"
+						size="lg" :disabled="loading">
+						<!-- 增加一个 Loading 图标会让体验更好，这里保持文字切换 -->
+						{{ loading ? '正在验证...' : '登录' }}
 					</BaseButton>
 				</div>
 			</form>
