@@ -3,6 +3,7 @@
 
 <script setup lang="ts">
 import { useGlobalAudio } from '~/composables/useGlobalAudio'
+import ToastContainer from '~/components/App/ToastContainer.vue'
 
 const { initAudio } = useGlobalAudio()
 
@@ -25,6 +26,11 @@ onMounted(() => {
     <!-- 全局音频控制器 -->
     <ClientOnly>
       <AppAudioController />
+    </ClientOnly>
+
+    <!-- 全局提示容器 -->
+    <ClientOnly>
+      <ToastContainer />
     </ClientOnly>
 
     <!-- 顶部导航 -->
