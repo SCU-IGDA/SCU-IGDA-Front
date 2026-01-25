@@ -2,8 +2,13 @@
 <!-- 登录页面 -->
 
 <script setup lang="ts">
+import { useAuth } from '~/composables/useAuth'
+
 // 页面元数据
 useHead({ title: '登录 - SCU IGDA' })
+
+// 用户认证
+const { login, isLoading } = useAuth()
 
 // UI 状态
 const form = ref({
@@ -11,6 +16,26 @@ const form = ref({
   password: '',     // 用户密码
   remember: false   // 记住密码
 })
+
+// 错误信息
+const errorMessage = ref('')
+
+// 处理登录
+const handleLogin = async () => {
+  errorMessage.value = ''
+
+  const result = await login(form.value.email, form.value.password, form.value.remember)
+
+  if (result.success) {
+    // 登录成功，等待状态更新
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    // 使用replace而不是push，确保浏览器历史记录正确
+    navigateTo('/', { replace: true })
+  } else {
+    errorMessage.value = result.error || '登录失败'
+  }
+}
 </script>
 
 <template>
@@ -29,7 +54,7 @@ const form = ref({
     <!-- 卡片：适配暗黑模式背景与边框 -->
     <div class="w-full max-w-md bg-white dark:bg-gray-800 py-10 px-8 shadow-xl rounded-2xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
 
-      <form class="space-y-6" @submit.prevent>
+      <form class="space-y-6" @submit.prevent="handleLogin">
 
         <!-- 基础输入框 -->
         <BaseInput
@@ -70,10 +95,21 @@ const form = ref({
           </div>
         </div>
 
+        <!-- 错误信息 -->
+        <div v-if="errorMessage" class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <p class="text-sm text-red-600 dark:text-red-400 text-center">{{ errorMessage }}</p>
+        </div>
+
         <!-- 提交按钮 -->
         <div>
-          <BaseButton type="submit" class="w-full shadow-md shadow-blue-200 dark:shadow-blue-900/20" size="lg">
-            登录
+          <BaseButton
+            type="submit"
+            class="w-full shadow-md shadow-blue-200 dark:shadow-blue-900/20"
+            size="lg"
+            :disabled="isLoading"
+            :loading="isLoading"
+          >
+            {{ isLoading ? '登录中...' : '登录' }}
           </BaseButton>
         </div>
       </form>
