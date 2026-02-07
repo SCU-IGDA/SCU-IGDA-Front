@@ -2,72 +2,71 @@
 
 // 定义接口...
 interface User {
-  userId: number
-  username: string
-  avatar: string
-  dynamicNum: number
-  permissionLevel: number
-  email: string
-  isLogin: boolean
+	userId : number
+	username : string
+	avatar : string
+	bio : string
+	organization : string
+	permissionLevel : number
+	email : string
+	updatedAt : string
+	isLogin : boolean
 }
 
 interface VerifyTokenResponse {
-  valid: boolean
-  userResponse?: User
-  message?: string
+	valid : boolean
+	userResponse ?: User
+	message ?: string
 }
 
 // composables/useAuth.ts
 export const useAuth = () => {
-  // 1. 顶层同步调用
-  const config = useRuntimeConfig()
-  const token = useCookie('auth_token') 
-  const tokenCookie = useCookie('auth_token', { maxAge: 60 * 60 * 24 * 7 })
-  const user = useState<User | null>('user', () => null)
-  
-  // 🆕 新增：获取 Nuxt App 上下文，用于稍后手动恢复上下文（如果需要）
-  const nuxtApp = useNuxtApp()
-  const isLoggedIn = computed(() => !!user.value)
-  const setUserState = (token: string, userData: User) => {
-    tokenCookie.value = token
-    user.value = userData
-  }
-  const logout = () => {
-    tokenCookie.value = null
-    user.value = null
-    // ⚠️ 重点修改：navigateTo 在服务端异步错误流中可能丢失上下文
-    // 我们加上 nuxtApp.runWithContext 确保它是安全的
-    nuxtApp.runWithContext(() => {
-        navigateTo('/login')
-    })
-  }
-  const fetchUser = async () => {
-    if (!tokenCookie.value) return
-    if (user.value) return
-	if (import.meta.server) return
-    try {
-      // ⚠️ 重点检查：config.public.apiBase
-      // 在服务端，如果是相对路径 (如 '/api')，会导致请求失败！
-      // 服务端必须是绝对路径 (如 'http://localhost:8080/api')
-      const res = await $fetch<VerifyTokenResponse>('/user/verifyToken', {
-        method: 'POST',
-        baseURL: config.public.apiBase as string, 
-        body: { token: tokenCookie.value }
-      })
-      if (res.valid && res.userResponse) {
-        user.value = res.userResponse
-      } else {
-        throw new Error(res.message || 'Token 无效')
-      }
-    } catch (e) {
-      console.error('恢复登录态失败:', e)
-      
-      // 🌟 重点修改：区分环境
-      // 如果是在服务端出错（比如网络连不上后端），直接清空 Token 即可，
-      // 不要强行 navigateTo，因为此时响应流可能还没准备好处理重定向
-      tokenCookie.value = null
-      user.value = null
-    }
-  }
-  return { user, isLoggedIn, setUserState, logout, fetchUser, token }
+	// 1. 顶层同步调用
+	const config = useRuntimeConfig()
+	const tokenCookie = useCookie('auth_token', { maxAge: 60 * 60 * 24 * 7 })
+	const user = useState<User | null>('user', () => null)
+
+	// 🆕 新增：获取 Nuxt App 上下文，用于稍后手动恢复上下文（如果需要）
+	const nuxtApp = useNuxtApp()
+	const isLoggedIn = computed(() => !!user.value)
+	const setUserState = (token : string, userData : User) => {
+		tokenCookie.value = token
+		user.value = userData
+	}
+	const logout = () => {
+		tokenCookie.value = null
+		user.value = null
+		// ⚠️ 重点修改：navigateTo 在服务端异步错误流中可能丢失上下文
+		// 我们加上 nuxtApp.runWithContext 确保它是安全的
+		nuxtApp.runWithContext(() => {
+			navigateTo('/login')
+		})
+	}
+	const fetchUser = async () => {
+		if (!tokenCookie.value) return
+		if (user.value) return
+		if (import.meta.server) return
+		try {
+			console.log(tokenCookie.value)
+			const res = await $fetch<VerifyTokenResponse>('/user/verifyToken', {
+				method: 'POST',
+				baseURL: config.public.apiBase as string,
+				body: { token: tokenCookie.value }
+			})
+			if (res.valid && res.userResponse) {
+				user.value = res.userResponse
+			} else {
+				throw new Error(res.message || 'Token 无效')
+			}
+		} catch (e) {
+			console.error('恢复登录态失败:', e)
+
+			// 🌟 重点修改：区分环境
+			// 如果是在服务端出错（比如网络连不上后端），直接清空 Token 即可，
+			// 不要强行 navigateTo，因为此时响应流可能还没准备好处理重定向
+			tokenCookie.value = null
+			user.value = null
+		}
+	}
+	return { user, isLoggedIn, setUserState, logout, fetchUser, tokenCookie }
 }

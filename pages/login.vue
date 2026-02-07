@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	// 1. 引入我们封装好的 useAuth
-	// 注意：确保 useAuth 导出了 login 或 setUserState 方法
+	// 注意：确保 useAuth 导出了 setUserState 方法
 	const { setUserState } = useAuth()
 	const router = useRouter()
 	const config = useRuntimeConfig()
@@ -8,7 +8,7 @@
 	// UI 状态
 	const loading = ref(false)
 	const form = ref({
-		email: '',
+		studentId: '',
 		password: '',
 		remember: false
 	})
@@ -21,7 +21,7 @@
 		avatar : string
 		dynamicNum : number
 		permissionLevel : number
-		email : string
+		studentId : string
 		isLogin : boolean
 	}
 	interface LoginResponse {
@@ -31,29 +31,23 @@
 	// ----------------
 	const handleLogin = async () => {
 		// 简单的表单校验
-		if (!form.value.email || !form.value.password) return
+		if (!form.value.studentId || !form.value.password) return
 		loading.value = true
 		try {
 			// 1. 发起请求
-			// 务必确认后端路径是 /user/login 还是 /login，这里以你提供的代码 /user/login 为准
 			const data = await $fetch<LoginResponse>('/user/login', {
 				method: 'POST',
 				baseURL: config.public.apiBase,
 				body: {
-					email: form.value.email,
+					studentId: form.value.studentId,
 					password: form.value.password
-				},
-				// 这里的错误通常由 catch 捕获，移除 onResponseError 以简化逻辑
+				}
 			})
 			// 2. 核心修改：使用 useAuth 统一管理状态
-			// 不要在这里手动 setCookie，也不要定义 useUser
-			// 只要这一行，全局状态 + Cookie 就都设置好了
 			if (data.token && data.userResponse) {
-				// 如果你的 useAuth 不支持传入过期时间，目前 Remember Me 功能可能需要修改 useAuth 才能生效
-				// 这里我们先完成核心的登录同步
 				setUserState(data.token, data.userResponse)
-
 				console.log('登录成功:', data.userResponse.username)
+				console.log('token',data.token)
 				// 3. 跳转
 				await router.push('/')
 			}
@@ -94,7 +88,7 @@
 
 				<!-- 基础输入框 -->
 				<!-- 建议给 BaseInput 加上 :disabled="loading" 属性，如果组件支持的话 -->
-				<BaseInput v-model="form.email" label="邮箱 / 学号" placeholder="请输入您的邮箱或学号" id="email" />
+				<BaseInput v-model="form.studentId" label="邮箱 / 学号" placeholder="请输入您的邮箱或学号" id="studentId" />
 
 				<div class="space-y-1">
 					<BaseInput v-model="form.password" type="password" label="密码" placeholder="请输入密码" id="password" />

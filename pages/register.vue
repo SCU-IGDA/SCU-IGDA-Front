@@ -16,6 +16,8 @@
 		email: '',
 		verificationCode: '',
 		password: '',
+		studentId: '',
+		tokenCode: '',
 		confirmPassword: '',
 		agree: false
 	})
@@ -70,19 +72,15 @@
 	// 1. 发送验证码逻辑
 	const sendVerificationCode = async () => {
 		if (!canResend.value) return
-
 		// 简单校验邮箱
 		if (!form.value.email || !form.value.email.includes('@')) {
 			alert('请输入有效的邮箱地址')
 			return
 		}
-
 		try {
-			// 假设后端发送验证码的接口是 /user/sendVeriCode (根据你之前的描述)
-			// 如果后端也是 /sendVeriCode 请自行修改 url
 			const res = await $fetch('/user/sendVeriCode', {
 				method: 'POST',
-				baseURL: config.public.apiBase, // 确保指向 http://127.0.0.1:8787
+				baseURL: config.public.apiBase,
 				body: {
 					email: form.value.email
 				}
@@ -106,13 +104,15 @@
 		}
 	}
 
-	// 2. 注册逻辑 (对接不可修改的 /setUser 接口)
+	// 2. 注册逻辑
 	const handleRegister = async () => {
 		// 前端校验
 		if (!form.value.username) return alert('请输入用户名')
 		if (!form.value.email) return alert('请输入邮箱')
+		if (!form.value.studentId) return alert('请输入学号')
 		if (!form.value.verificationCode) return alert('请输入验证码')
 		if (!form.value.password) return alert('请输入密码')
+		if (!form.value.tokenCode) return alert('请输入社团邀请码')
 		if (form.value.password !== form.value.confirmPassword) {
 			alert('两次输入的密码不一致')
 			return
@@ -127,10 +127,11 @@
 		try {
 			// 严格构造后端需要的 Payload
 			const payload = {
-				username: form.value.username,
+				studentId: form.value.studentId,
 				password: form.value.password,
 				email: form.value.email,
-				verificationCode: form.value.verificationCode
+				verificationCode: form.value.verificationCode,
+				tokenCode: form.value.tokenCode
 			}
 
 			// 调用后端 /setUser 接口
@@ -217,6 +218,10 @@
 				<BaseInput v-model="form.username" label="用户名" placeholder="给自己起个响亮的名字" id="username" />
 
 				<BaseInput v-model="form.email" label="电子邮箱" type="email" placeholder="example@scu.edu.cn" id="email" />
+								
+				<BaseInput v-model="form.studentId" label="学号" placeholder="请输入学号" id="studentId" />
+				
+				<BaseInput v-model="form.tokenCode" label="社团邀请码" placeholder="请输入社团邀请码" id="tokenCode" />
 
 				<!-- 验证码输入框与重新发送按钮 -->
 				<div>

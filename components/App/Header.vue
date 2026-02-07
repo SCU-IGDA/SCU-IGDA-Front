@@ -2,8 +2,8 @@
 <!-- 全局导航栏 -->
 
 <script setup lang="ts">
-	// 引入 Auth 钩子 (确保你有 composables/useAuth.ts)
-	const { user, isLoggedIn, logout, token } = useAuth()
+	// 引入 Auth 钩子
+	const { user, isLoggedIn, logout, tokenCookie } = useAuth()
 
 	// 定义导航菜单项
 	const navLinks = [
@@ -104,7 +104,7 @@
 						</div>
 
 						<!-- 情况B: 未登录 -->
-						<NuxtLink v-else-if="!token" to="/login" class="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white dark:text-black bg-gray-800 dark:bg-gray-300 rounded-md hover:bg-gray-700 dark:hover:bg-gray-200 transition-all shadow-sm">登录 / 注册</NuxtLink>
+						<NuxtLink v-else-if="!tokenCookie" to="/login" class="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white dark:text-black bg-gray-800 dark:bg-gray-300 rounded-md hover:bg-gray-700 dark:hover:bg-gray-200 transition-all shadow-sm">登录 / 注册</NuxtLink>
 
 						<!-- 加载时的占位符 (防止闪烁) -->
 						<template v-else>
