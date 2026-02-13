@@ -21,12 +21,12 @@
 	// 3. 计算显示的头像（优先显示预览，其次是用户头像，最后是默认图）
 	const displayAvatar = computed(() => {
 		if (avatarPreview.value) return avatarPreview.value
-		if (user.value?.avatarUrl) {
+		if (user.value?.avatar) {
 			// ⚠️ 如果你的数据库只存了相对路径 (如 userInfo/avatar/...), 这里需要补全前缀
 			// 如果存的是全路径则直接用
-			return user.value.avatarUrl.startsWith('http')
-				? user.value.avatarUrl
-				: `https://你的B2存储桶域名/${user.value.avatarUrl}`
+			return user.value.avatar.startsWith('http')
+				? user.value.avatar
+				: `https://society.s3.us-west-004.backblazeb2.com/${user.value.avatar}`
 		}
 		return `https://api.dicebear.com/7.x/initials/svg?seed=${user.value?.username || 'User'}`
 	})
