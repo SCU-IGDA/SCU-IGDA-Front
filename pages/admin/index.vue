@@ -6,6 +6,52 @@ import { ADMIN_TABS, UserRole, type AdminTab, type User } from '~/types/user'
 import { useAuth } from '~/composables/useAuth'
 import { useToast } from '~/composables/useToast'
 
+const config = useRuntimeConfig()
+
+const mapPermissionToRole = (permissionLevel: number): UserRole => {
+  if (permissionLevel >= 3) return UserRole.ADMIN
+  if (permissionLevel === 2) return UserRole.CORE
+  if (permissionLevel === 1) return UserRole.PREMIUM
+  return UserRole.MEMBER
+}
+
+const { data: allUsers, pending: usersLoading, error: usersError, refresh: refreshUsers } = await useFetch<User[]>('/user/userList', {
+  baseURL: config.public.apiBase,
+  method: 'GET',
+  server: false,
+  lazy: true,
+  transform: (response: any) => {
+    if (!Array.isArray(response)) return []
+    return response.map((item: any) => ({
+      id: item.userId,
+      username: item.username,
+      email: item.email,
+      role: mapPermissionToRole(item.permissionLevel ?? 0),
+      avatar: item.avatar,
+      createdAt: item.createdAt || '',
+      lastLogin: item.updatedAt || ''
+    })) as User[]
+  }
+})
+
+interface ArticleListItem {
+  id: number
+}
+
+const { data: articles, pending: articlesLoading, error: articlesError, refresh: refreshArticles } = await useFetch<ArticleListItem[]>('/article/list', {
+  baseURL: config.public.apiBase,
+  method: 'GET',
+  server: false,
+  lazy: true,
+  transform: (response: any) => {
+    if (!Array.isArray(response)) return []
+    return response as ArticleListItem[]
+  }
+})
+
+const totalUsers = computed(() => allUsers.value?.length || 0)
+const totalArticles = computed(() => articles.value?.length || 0)
+
 // 页面元数据和中间件
 definePageMeta({
   middleware: 'admin-auth'
@@ -41,20 +87,6 @@ const availableRoles = computed(() => {
   ]
 })
 
-// 模拟用户数据
-const mockUsers: User[] = [
-  { id: 1, username: '张三', email: 'zhangsan@example.com', role: UserRole.MEMBER, createdAt: '2025-01-10', lastLogin: '2026-01-24' },
-  { id: 2, username: '李四', email: 'lisi@example.com', role: UserRole.PREMIUM, createdAt: '2025-02-15', lastLogin: '2026-01-23' },
-  { id: 3, username: '王五', email: 'wangwu@example.com', role: UserRole.CORE, createdAt: '2025-03-20', lastLogin: '2026-01-22' },
-  { id: 4, username: '赵六', email: 'zhaoliu@example.com', role: UserRole.MEMBER, createdAt: '2025-04-25', lastLogin: '2026-01-21' },
-  { id: 5, username: '钱七', email: 'qianqi@example.com', role: UserRole.PREMIUM, createdAt: '2025-05-30', lastLogin: '2026-01-20' },
-  { id: 6, username: '孙八', email: 'sunba@example.com', role: UserRole.MEMBER, createdAt: '2025-06-05', lastLogin: '2026-01-19' },
-  { id: 7, username: '周九', email: 'zhoujiu@example.com', role: UserRole.CORE, createdAt: '2025-07-10', lastLogin: '2026-01-18' },
-  { id: 8, username: '吴十', email: 'wushi@example.com', role: UserRole.PREMIUM, createdAt: '2025-08-15', lastLogin: '2026-01-17' },
-  { id: 9, username: '郑十一', email: 'zhengshiyi@example.com', role: UserRole.MEMBER, createdAt: '2025-09-20', lastLogin: '2026-01-16' },
-  { id: 10, username: '王小明', email: 'wangxiaoming@example.com', role: UserRole.CORE, createdAt: '2025-10-25', lastLogin: '2026-01-15' }
-]
-
 // 模糊搜索函数
 const performSearch = () => {
   if (!searchQuery.value.trim()) {
@@ -65,7 +97,7 @@ const performSearch = () => {
   const query = searchQuery.value.toLowerCase().trim()
 
   // 模糊匹配：检查用户名或邮箱是否包含查询字符串
-  const results = mockUsers.filter(user => {
+  const results = (allUsers.value || []).filter(user => {
     const usernameMatch = user.username.toLowerCase().includes(query)
     const emailMatch = user.email.toLowerCase().includes(query)
     return usernameMatch || emailMatch
@@ -88,39 +120,7 @@ const debouncedSearch = () => {
 
 // 更改用户角色
 const changeUserRole = (userId: string | number, newRole: UserRole) => {
-  const userIndex = mockUsers.findIndex(u => u.id === userId)
-  if (userIndex !== -1 && mockUsers[userIndex]) {
-    // 在实际应用中，这里应该调用API更新用户角色
-    // 现在只是更新本地模拟数据
-    mockUsers[userIndex].role = newRole
-
-    // 更新搜索结果中的用户角色 - 创建新数组以触发响应式更新
-    const resultIndex = searchResults.value.findIndex(u => u.id === userId)
-    if (resultIndex !== -1 && searchResults.value[resultIndex]) {
-      // 创建新数组以触发Vue的响应式更新
-      const newResults = [...searchResults.value]
-      const userToUpdate = newResults[resultIndex]
-      if (userToUpdate) {
-        newResults[resultIndex] = {
-          id: userToUpdate.id,
-          username: userToUpdate.username,
-          email: userToUpdate.email,
-          role: newRole,
-          avatar: userToUpdate.avatar,
-          createdAt: userToUpdate.createdAt,
-          lastLogin: userToUpdate.lastLogin
-        }
-        searchResults.value = newResults
-      }
-    }
-
-    // 显示成功消息
-    const updatedUser = mockUsers[userIndex]
-    if (updatedUser) {
-      // 使用toast显示成功消息
-      toast.success(`成功将 ${updatedUser.username} 的角色更改为 ${getRoleDisplayName(newRole)}`)
-    }
-  }
+  toast.info('角色修改暂未接入后端，当前仅支持查看用户信息')
 }
 
 
@@ -533,7 +533,7 @@ onBeforeUnmount(() => {
           <div v-if="activeTab === 'dashboard'">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
-                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">1,248</div>
+                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">{{ totalUsers }}</div>
                 <div class="text-sm text-gray-600 dark:text-gray-400">总用户数</div>
               </div>
               <div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl">
@@ -541,7 +541,7 @@ onBeforeUnmount(() => {
                 <div class="text-sm text-gray-600 dark:text-gray-400">今日活跃</div>
               </div>
               <div class="bg-purple-50 dark:bg-purple-900/20 p-6 rounded-xl">
-                <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">89</div>
+                <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">{{ totalArticles }}</div>
                 <div class="text-sm text-gray-600 dark:text-gray-400">新内容</div>
               </div>
               <div class="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-xl">

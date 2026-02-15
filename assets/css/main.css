@@ -2,22 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 隐藏系统鼠标指针，使用自定义光标 */
-html,
-body {
-    cursor: none;
-}
-
-/* 为可交互元素保留指针光标 */
-a,
-button,
-[role="button"],
-input[type="submit"],
-input[type="button"],
-.cursor-pointer {
-    cursor: pointer;
-}
-
 body {
     @apply bg-gray-50 text-gray-900 transition-colors duration-300;
 }

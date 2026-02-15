@@ -10,7 +10,7 @@
 	import { useAuth } from '~/composables/useAuth'
 
 	const colorMode = useColorMode()
-	const { user, token } = useAuth() // 获取用户信息
+	const { user } = useAuth() // 获取用户信息
 	const config = useRuntimeConfig()
 	const route = useRoute()
 	const isEditMode = computed(() => !!route.params.id)
