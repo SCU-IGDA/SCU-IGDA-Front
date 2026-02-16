@@ -77,8 +77,31 @@
 		return valid
 	}
 
-	// 处理文件选择
-	const handleFileChange = (event : Event) => {
+  const handleUploadImg = async (files: Array<File>, callback: (urls: Array<string>) => void) => {
+    // 假设后端有一个图片上传接口 /upload/image
+    // 如果没有，暂时演示返回本地 blob URL
+    // TODO: 替换为真实的上传逻辑
+    const res = await Promise.all(
+      files.map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          // 这里应该调用上传 API
+          // const formData = new FormData()
+          // formData.append('file', file)
+          // $fetch('/upload/image', { method: 'POST', body: formData }).then(url => resolve(url))
+
+          // 临时方案：转 Base64 (避免 Blob URL 刷新失效)
+          const reader = new FileReader()
+          reader.readAsDataURL(file)
+          reader.onload = () => resolve(reader.result as string)
+          reader.onerror = (error) => reject(error)
+        })
+      })
+    )
+    callback(res)
+  }
+
+  // 处理文件选择
+  const handleFileChange = (event : Event) => {
 		const input = event.target as HTMLInputElement
 		if (input.files && input.files[0]) {
 			const file = input.files[0]
@@ -139,7 +162,7 @@
 				baseURL:config.public.apiBase,
 				headers: {
 					// 如果需要 token鉴权，可以在这里加
-					// Authorization: `Bearer ${token.value}` 
+					// Authorization: `Bearer ${token.value}`
 				}
 			})
 			console.log('发布成功:', response)
@@ -220,30 +243,30 @@
 					  </label>
 					  <div class="flex items-center gap-4">
 					    <!-- 预览区域 -->
-					    <div 
+					    <div
 					      v-if="previewUrl || form.cover"
-					      class="w-32 h-32 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 relative group"
+					      class="w-48 aspect-video rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 relative group"
 					    >
 					      <!-- 优先显示本地预览，其次显示编辑模式下的原有URL -->
-					      <img 
-					        :src="previewUrl || form.cover" 
-					        class="w-full h-full object-cover" 
-					        alt="封面" 
+					      <img
+					        :src="previewUrl || form.cover"
+					        class="w-full h-full object-cover"
+					        alt="封面"
 					      />
 					    </div>
-					
+
 					    <!-- 上传控件区域 -->
 					    <div class="flex-1">
 					      <!-- 隐藏原生 file input，用样式美化或者直接显示 -->
-					      <input 
-					        type="file" 
+					      <input
+					        type="file"
 					        accept="image/png, image/jpeg, image/webp"
 					        @change="handleFileChange"
 					        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
 					      />
-					      
+
 					      <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-					        后端强制要求上传文件。支持 JPG、PNG、WebP 格式。
+					        建议尺寸 16:9 (如 1920x1080)，支持 JPG、PNG、WebP 格式。
 					      </p>
 					    </div>
 					  </div>
@@ -260,7 +283,8 @@
                 'quote', 'unorderedList', 'orderedList', 'task', 'codeRow', 'code',
                 'link', 'image', 'table', 'mermaid', 'katex', 'revoke', 'next',
                 'save', 'preview', 'pageFullscreen', 'fullscreen'
-              ]" :preview="false" class="min-h-[400px] select-auto" />
+              ]" :preview="false" class="min-h-[400px] select-auto"
+              @onUploadImg="handleUploadImg" />
 						<div class="flex justify-between items-center mt-3">
 							<p class="text-sm text-gray-500 dark:text-gray-400">
 								支持 Markdown 语法，可使用工具栏快速格式化
