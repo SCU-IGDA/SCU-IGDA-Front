@@ -154,7 +154,7 @@
 									<!-- 用户信息卡片 -->
 									<div
 										class="flex items-center gap-3 px-4 py-2 mb-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-										<img :src="user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'"
+										<img :src="user?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'"
 											class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover" />
 										<div class="overflow-hidden">
 											<p class="font-bold text-gray-900 dark:text-white truncate">

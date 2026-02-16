@@ -29,6 +29,7 @@
 		server: false, // 建议：客户端获取，避免后端响应慢导致首屏卡死
 		lazy: true,
 		transform: (data) => {
+			console.log(data)
 			return {
 				id: data.id,
 				title: data.title,
@@ -37,7 +38,7 @@
 				// 映射作者信息，把文章日期放这里（为了适配你的 UI 结构）
 				author: {
 					name: data.author?.username || '未知作者',
-					avatar: data.author?.avatar || '',
+					avatar: data.author?.avatarUrl || '',
 					date: data.date ? data.date.split('T')[0] : '未知日期'
 				},
 				// 后端是一个 category 字符串，前端 UI 是 tags 数组，做一下转换

@@ -4,7 +4,7 @@
 interface User {
 	userId : number
 	username : string
-	avatar : string
+	avatarUrl : string
 	bio : string
 	organization : string
 	permissionLevel : number
@@ -52,12 +52,12 @@ export const useAuth = () => {
 				baseURL: config.public.apiBase as string,
 				body: { token: tokenCookie.value }
 			})
-			console.log(res.userResponse?.avatar)
+			console.log(res.userResponse?.avatarUrl)
 			if (res.valid && res.userResponse) {
-				const rawAvatar = res.userResponse.avatar;
+				const rawAvatar = res.userResponse.avatarUrl;
 				if (rawAvatar) {
 					const separator = rawAvatar.includes('?') ? '&' : '?';
-					res.userResponse.avatar = `${rawAvatar}${separator}_t=${Date.now()}`;
+					res.userResponse.avatarUrl = `${rawAvatar}${separator}_t=${Date.now()}`;
 				}
 				user.value = res.userResponse
 			} else {
