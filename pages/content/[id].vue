@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	// 引入路由和工具
 	const route = useRoute()
+	const router = useRouter()
 	const config = useRuntimeConfig()
 	const postId = route.params.id
 
@@ -103,6 +104,10 @@
 		}
 	])
 	const commentInput = ref('')
+	
+	const handleEdit = () => {
+	    router.push(`/content/edit/${postId}`)
+	}
 </script>
 
 
@@ -140,30 +145,45 @@
 					</div>
 
 					<!-- 3. 作者栏 -->
-					<div
-						class="px-8 py-4 border-t border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4 select-none">
-						<div class="flex items-center gap-3">
-							<!-- 作者头像 -->
-							<div
-								class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0 overflow-hidden">
-								<img v-if="post.author.avatar" :src="post.author.avatar"
-									class="w-full h-full object-cover">
-							</div>
-							<div class="flex flex-col">
-								<span
-									class="font-bold text-gray-900 dark:text-gray-100 text-sm">{{ post.author.name }}</span>
-								<span class="text-xs text-gray-500 dark:text-gray-400">发布于 {{ post.author.date }} ·
-									{{ post.views }} 阅读</span>
-							</div>
-						</div>
-
-						<!-- 标签 (Category) -->
-						<div class="flex gap-2">
-							<div v-for="tag in post.tags" :key="tag"
-								class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs border border-gray-200 dark:border-gray-600">
-								{{ tag }}
-							</div>
-						</div>
+					<!-- 3. 作者栏 -->
+					<div class="px-8 py-4 border-t border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4 select-none">
+					    
+					    <!-- 左侧：作者信息 -->
+					    <div class="flex items-center gap-3">
+					        <div class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0 overflow-hidden">
+					            <img v-if="post.author.avatar" :src="post.author.avatar" class="w-full h-full object-cover">
+					        </div>
+					        <div class="flex flex-col">
+					            <span class="font-bold text-gray-900 dark:text-gray-100 text-sm">
+					                {{ post.author.name }}
+					            </span>
+					            <span class="text-xs text-gray-500 dark:text-gray-400">
+					                发布于 {{ post.author.date }} · {{ post.views }} 阅读
+					            </span>
+					        </div>
+					    </div>
+					
+					    <!-- 右侧：操作区 (标签 + 编辑按钮) -->
+					    <div class="flex items-center gap-3">
+					        
+					        <!-- 🌟 编辑按钮 (仅有权限时显示) -->
+					        <BaseButton
+					            @click="handleEdit" 
+					            size="sm" 
+					            variant="outline"
+					            class="text-blue-600 border-blue-200 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-900/30"
+					        >
+					            ✎ 编辑文章
+					        </BaseButton>
+					
+					        <!-- 标签 -->
+					        <div class="flex gap-2">
+					            <div v-for="tag in post.tags" :key="tag"
+					                class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs border border-gray-200 dark:border-gray-600 rounded">
+					                {{ tag }}
+					            </div>
+					        </div>
+					    </div>
 					</div>
 
 					<!-- 4. 正文 -->
