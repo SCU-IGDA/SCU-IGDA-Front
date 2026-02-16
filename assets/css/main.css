@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 隐藏系统鼠标指针，使用自定义光标 */
-html,
-body {
+/* 默认显示系统光标，防止组件加载失败时用户无法操作 */
+/* 只有当 JS 成功加载并激活自定义光标组件时，才隐藏系统光标 */
+html.custom-cursor-active,
+html.custom-cursor-active body {
     cursor: none;
 }
 

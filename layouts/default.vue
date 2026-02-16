@@ -20,8 +20,10 @@ onMounted(() => {
   <div class="flex flex-col min-h-screen transition-colors duration-300 bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
 
     <!-- 鼠标特效 -->
-    <AppCursor />
-    <AppClickSpark />
+    <ClientOnly>
+      <AppCursor />
+      <AppClickSpark />
+    </ClientOnly>
 
     <!-- 全局音频控制器 -->
     <ClientOnly>

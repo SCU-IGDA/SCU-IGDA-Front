@@ -7,35 +7,82 @@ const cursorY = ref(0)
 const trailerX = ref(0)
 const trailerY = ref(0)
 const isHovering = ref(false)
+const isDesktop = ref(false)
+
+let animationFrameId: number | null = null
 
 // 简单的线性插值算法 (Lerp) 实现平滑跟随
 const lerp = (start: number, end: number, factor: number) => {
   return start + (end - start) * factor
 }
 
-onMounted(() => {
-  // 1. 监听鼠标移动
-  window.addEventListener('mousemove', (e) => {
-    cursorX.value = e.clientX
-    cursorY.value = e.clientY
+// 检测是否为桌面环境 (宽屏)
+const checkScreenSize = () => {
+  if (import.meta.client) {
+    // 匹配 Tailwind md 断点 (768px)
+    isDesktop.value = window.matchMedia('(min-width: 768px)').matches
 
-    // 检测鼠标下方是否是可交互元素 (a标签, button, 或 .cursor-pointer)
-    const target = e.target as HTMLElement
-    isHovering.value =
-      target.tagName === 'A' ||
-      target.tagName === 'BUTTON' ||
-      target.closest('a') !== null ||
-      target.closest('button') !== null ||
-      window.getComputedStyle(target).cursor === 'pointer'
-  })
+    if (isDesktop.value) {
+      document.documentElement.classList.add('custom-cursor-active')
+    } else {
+      document.documentElement.classList.remove('custom-cursor-active')
+    }
+  }
+}
 
-  // 2. 启动动画循环 (每一帧更新跟随圆圈的位置)
-  const animate = () => {
+const onMouseMove = (e: MouseEvent) => {
+  if (!isDesktop.value) return
+
+  cursorX.value = e.clientX
+  cursorY.value = e.clientY
+
+  // 检测鼠标下方是否是可交互元素 (a标签, button, 或 .cursor-pointer)
+  const target = e.target as HTMLElement
+
+  // 快速检查
+  if (target.tagName === 'A' || target.tagName === 'BUTTON') {
+    isHovering.value = true
+    return
+  }
+
+  // 深度检查
+  isHovering.value =
+    target.closest('a') !== null ||
+    target.closest('button') !== null ||
+    window.getComputedStyle(target).cursor === 'pointer'
+}
+
+const animate = () => {
+  if (isDesktop.value) {
     trailerX.value = lerp(trailerX.value, cursorX.value, 0.15) // 0.15 是延迟系数，越小越慢
     trailerY.value = lerp(trailerY.value, cursorY.value, 0.15)
-    requestAnimationFrame(animate)
   }
+  animationFrameId = requestAnimationFrame(animate)
+}
+
+onMounted(() => {
+  checkScreenSize()
+
+  // 监听窗口大小变化
+  window.addEventListener('resize', checkScreenSize)
+
+  // 1. 监听鼠标移动
+  window.addEventListener('mousemove', onMouseMove)
+
+  // 2. 启动动画循环 (每一帧更新跟随圆圈的位置)
   animate()
+})
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    window.removeEventListener('resize', checkScreenSize)
+    window.removeEventListener('mousemove', onMouseMove)
+    document.documentElement.classList.remove('custom-cursor-active')
+
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId)
+    }
+  }
 })
 </script>
 
