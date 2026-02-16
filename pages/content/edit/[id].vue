@@ -167,7 +167,7 @@ if (isEditMode.value) {
             <div class="flex items-center gap-4">
               <div
                 v-if="form.cover"
-                class="w-32 h-32 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600"
+                class="w-48 aspect-video rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600"
               >
                 <img :src="form.cover" class="w-full h-full object-cover" alt="封面" />
               </div>
@@ -178,7 +178,7 @@ if (isEditMode.value) {
                   class="select-auto"
                 />
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  建议尺寸 1200×600，支持 JPG、PNG、WebP 格式
+                  建议尺寸 16:9 (如 1920x1080)，支持 JPG、PNG、WebP 格式
                 </p>
               </div>
             </div>
