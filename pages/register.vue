@@ -2,7 +2,8 @@
 <!-- 注册页面 -->
 
 <script setup lang="ts">
-	import { ref, onMounted, onUnmounted } from 'vue'
+	import type { RefSymbol } from '@vue/reactivity'
+import { ref, onMounted, onUnmounted } from 'vue'
 	import { useAuth } from '~/composables/useAuth'
 	const router = useRouter()
 	const config = useRuntimeConfig()
@@ -131,7 +132,8 @@
 				password: form.value.password,
 				email: form.value.email,
 				verificationCode: form.value.verificationCode,
-				tokenCode: form.value.tokenCode
+				tokenCode: form.value.tokenCode,
+				username: form.value.username
 			}
 
 			// 调用后端 /setUser 接口

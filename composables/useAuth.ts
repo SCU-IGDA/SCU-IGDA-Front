@@ -47,13 +47,18 @@ export const useAuth = () => {
 		if (user.value) return
 		if (import.meta.server) return
 		try {
-			console.log(tokenCookie.value)
 			const res = await $fetch<VerifyTokenResponse>('/user/verifyToken', {
 				method: 'POST',
 				baseURL: config.public.apiBase as string,
 				body: { token: tokenCookie.value }
 			})
+			console.log(res.userResponse?.avatar)
 			if (res.valid && res.userResponse) {
+				const rawAvatar = res.userResponse.avatar;
+				if (rawAvatar) {
+					const separator = rawAvatar.includes('?') ? '&' : '?';
+					res.userResponse.avatar = `${rawAvatar}${separator}_t=${Date.now()}`;
+				}
 				user.value = res.userResponse
 			} else {
 				throw new Error(res.message || 'Token 无效')
@@ -68,5 +73,11 @@ export const useAuth = () => {
 			user.value = null
 		}
 	}
-	return { user, isLoggedIn, setUserState, logout, fetchUser, tokenCookie }
+	const refreshUser = async () => {
+		// 先清空当前状态，确保 fetchUser 能跑下去
+		user.value = null
+		await fetchUser()
+	}
+
+	return { user, isLoggedIn, setUserState, logout, fetchUser, tokenCookie,refreshUser }
 }
