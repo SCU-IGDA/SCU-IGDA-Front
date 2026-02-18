@@ -1,6 +1,4 @@
 <script setup lang="ts">
-	// 1. 引入我们封装好的 useAuth
-	// 注意：确保 useAuth 导出了 setUserState 方法
 	const { setUserState } = useAuth()
 	const router = useRouter()
 	const config = useRuntimeConfig()
@@ -13,8 +11,6 @@
 		remember: false
 	})
 	// --- 类型定义 --- 
-	// 建议：最佳实践是将这些接口移到 `/types/user.d.ts` 或 `/composables/useAuth.ts` 中导出
-	// 这里保留是为了不报错
 	interface User {
 		userId : number
 		username : string
@@ -28,13 +24,10 @@
 		userResponse : User
 		token : string
 	}
-	// ----------------
 	const handleLogin = async () => {
-		// 简单的表单校验
 		if (!form.value.studentId || !form.value.password) return
 		loading.value = true
 		try {
-			// 1. 发起请求
 			const data = await $fetch<LoginResponse>('/user/login', {
 				method: 'POST',
 				baseURL: config.public.apiBase,
@@ -43,7 +36,6 @@
 					password: form.value.password
 				}
 			})
-			// 2. 核心修改：使用 useAuth 统一管理状态
 			if (data.token && data.userResponse) {
 				setUserState(data.token, data.userResponse)
 				console.log('登录成功:', data.userResponse.username)
@@ -53,10 +45,7 @@
 			}
 		} catch (error : any) {
 			console.error('登录流程异常:', error)
-
-			// 优雅的错误信息提取
 			const errorData = error.data
-			// 优先显示后端返回的 message，其次显示 error 字段，最后显示默认文本
 			const msg = errorData?.message || errorData?.error || '登录请求失败，请检查网络或账号密码'
 
 			alert(msg)
@@ -111,14 +100,11 @@
 						</a>
 					</div>
 				</div>
-
-				<!-- 提交按钮 -->
 				<div>
-					<!-- 稍微优化：Loading 时禁止点击且鼠标样式变化 -->
+					<!-- Loading 时禁止点击且鼠标样式变化 -->
 					<BaseButton type="submit"
 						class="w-full shadow-md shadow-blue-200 dark:shadow-blue-900/20 disabled:opacity-70 disabled:cursor-not-allowed"
 						size="lg" :disabled="loading">
-						<!-- 增加一个 Loading 图标会让体验更好，这里保持文字切换 -->
 						{{ loading ? '正在验证...' : '登录' }}
 					</BaseButton>
 				</div>

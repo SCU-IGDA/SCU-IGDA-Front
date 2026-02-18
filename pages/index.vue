@@ -3,9 +3,9 @@
 	const { isLoggedIn, user } = useAuth()
 	const handleHeroAction = () => {
 		if (isLoggedIn.value) {
-			navigateTo('/dashboard') // 已登录去控制台
+			navigateTo('/dashboard')
 		} else {
-			navigateTo('/register') // 未登录去注册
+			navigateTo('/register')
 		}
 	}
 	// 页面元数据（SEO）

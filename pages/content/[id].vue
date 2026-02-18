@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import type { RefSymbol } from '@vue/reactivity'
+
 	// 引入路由和工具
 	const route = useRoute()
 	const router = useRouter()
+	const { isLoggedIn, user } = useAuth()
 	const config = useRuntimeConfig()
 	const postId = route.params.id
 
-	// --- 定义接口类型 ---
+	// 定义接口类型
 	interface ApiArticleDetail {
 		id : number
 		title : string
@@ -21,27 +24,23 @@
 		}
 	}
 
-	// --- 1. 获取文章详情数据 ---
-	// 使用 lazy: true 和 server: false 避免服务端渲染阻塞，防止页面卡顿
+	// 获取文章详情数据
 	const { data: post, pending, error } = await useFetch<ApiArticleDetail>(`article/specific/${postId}`, {
 		baseURL: config.public.apiBase,
 		method: 'GET',
-		server: false, // 建议：客户端获取，避免后端响应慢导致首屏卡死
+		server: false,
 		lazy: true,
 		transform: (data) => {
 			console.log(data)
 			return {
 				id: data.id,
 				title: data.title,
-				// 后端 coverUrl 映射给前端 cover
 				cover: data.coverUrl || '',
-				// 映射作者信息，把文章日期放这里（为了适配你的 UI 结构）
 				author: {
 					name: data.author?.username || '未知作者',
 					avatar: data.author?.avatarUrl || '',
 					date: data.date ? data.date.split('T')[0] : '未知日期'
 				},
-				// 后端是一个 category 字符串，前端 UI 是 tags 数组，做一下转换
 				tags: data.category ? [data.category] : [],
 				content: data.content || '',
 				likes: data.likes || 0,
@@ -49,42 +48,32 @@
 			}
 		}
 	})
-
-	// --- 2. 交互逻辑：增加阅读量 & 点赞 ---
-
-	// --- 增加阅读量 (进入页面后自动触发) ---
+	// 交互逻辑
+	// 增加阅读量
 	onMounted(() => {
 	  if (postId) {
-	    // 1. 构建表单数据对象
 	    const formData = new FormData()
-	    formData.append('articleId', String(postId)) // 确保转为字符串
-	
+	    formData.append('articleId', String(postId))
 	    $fetch('/article/addView', {
 	      baseURL: config.public.apiBase,
 	      method: 'POST',
-	      body: formData // 👈 重点：传 FormData，而不是普通对象
+	      body: formData
 	    }).catch(err => console.error('增加阅读量失败', err))
 	  }
 	})
-	
-	// --- 处理点赞 ---
+	// 处理点赞
 	const isLiking = ref(false)
 	const handleLike = async () => {
 	  if (isLiking.value || !post.value) return
 	  isLiking.value = true
-	
 	  try {
-	    // 1. 构建表单数据对象
 	    const formData = new FormData()
 	    formData.append('articleId', String(postId))
-	
 	    await $fetch('/article/addLike', {
 	      baseURL: config.public.apiBase,
 	      method: 'POST',
-	      body: formData // 👈 重点：传 FormData
+	      body: formData
 	    })
-	
-	    // 乐观更新：如果不报错，直接在前端 +1
 	    post.value.likes += 1
 	  } catch (error) {
 	    console.error('点赞失败', error)
@@ -95,7 +84,7 @@
 	}
 
 
-	// --- 3. 评论数据 (保持 Mock，后端暂未实现) ---
+	// 评论数据(后端暂未实现)
 	const comments = ref([
 		{
 			id: 1,
@@ -176,6 +165,8 @@
 					        >
 					            ✎ 编辑文章
 					        </BaseButton>
+					
+							
 					
 					        <!-- 标签 -->
 					        <div class="flex gap-2">
